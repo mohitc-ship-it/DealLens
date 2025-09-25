@@ -1,6 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server"
 
-const API_BASE_URL =  "http://localhost:8000/upload-and-generate-report/"
+const API_BASE_URL =  "http://localhost:8000/upload/"
 
 const reportStorage = new Map<string, any>()
 function generateReportId(): string {
@@ -33,12 +33,15 @@ export async function POST(request: NextRequest) {
       const backendFormData = new FormData()
       backendFormData.append("file", file)
 
-      const response = await fetch(`${API_BASE_URL}/api/upload`, {
+      const response = await fetch(`${API_BASE_URL}`, {
         method: "POST",
         body: backendFormData,
         // Add timeout to prevent hanging
-        signal: AbortSignal.timeout(30000), // Increased timeout for PDF processing
+        // signal: AbortSignal.timeout(30000), // Increased timeout for PDF processing
       })
+
+
+      console.log("response is .,", response)
 
       if (response.ok) {
         const backendData = await response.json()

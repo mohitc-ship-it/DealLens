@@ -27,8 +27,11 @@ export default function ReportPage() {
     const fetchReport = async () => {
       try {
         const response = await fetch(`/api/report/${reportId}`)
+        console.log("got response in use efdfecct ", response)
         if (!response.ok) throw new Error("Failed to fetch report")
-        const data = await response.json()
+        let data = await response.json()
+        console.log("filrerd ", data)
+        data = data.report
         setReport(data)
       } catch (err) {
         setError(err instanceof Error ? err.message : "Failed to load report")
