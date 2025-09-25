@@ -317,7 +317,7 @@ def rag(query, vectorstore, summary_to_chunk, k=5, min_text_chunks=1):
     # Pass the list of HumanMessage objects directly
     # response = llm.invoke(messages)
     return response
-
+    
 # -------------------------------
 # Example usage
 # -------------------------------

@@ -110,8 +110,8 @@ async def generate_report(file_key: str):
         # -------------------------
         # 🔹 Here call your pipeline:
         report = build_report(vectorstore, summary_to_chunk)
-        -------------------------
-        For demo, we’ll return dummy data
+        # -------------------------
+        # For demo, we’ll return dummy data
         report = {
             "file": matching_files[0],
             "report": f"Generated report for {matching_files[0]}"
