@@ -4,7 +4,7 @@ import pickle
 import base64
 from typing import Set, List, Dict, Any
 
-from langchain.vectorstores import Chroma
+from langchain_chroma import Chroma
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
 
 PICKLE_PATH = "summary_to_chunk.pkl"

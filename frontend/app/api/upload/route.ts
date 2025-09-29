@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
         method: "POST",
         body: backendFormData,
         // Add timeout to prevent hanging
-        // signal: AbortSignal.timeout(30000), // Increased timeout for PDF processing
+        signal: AbortSignal.timeout(300000000), // Increased timeout for PDF processing
       })
 
 

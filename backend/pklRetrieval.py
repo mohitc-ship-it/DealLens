@@ -1,15 +1,16 @@
 import pickle
 from base64 import b64decode
-from langchain.vectorstores import Chroma
+from langchain_chroma import Chroma
 from langchain.schema import Document
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain.prompts import ChatPromptTemplate
 from langchain.schema import HumanMessage
 
+from langchain_openai import OpenAIEmbeddings
+
 import pickle
 from base64 import b64decode
-from langchain.vectorstores import Chroma
 from langchain.schema import Document
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
 from langchain_google_genai import ChatGoogleGenerativeAI
@@ -23,10 +24,15 @@ with open("summary_to_chunk.pkl", "rb") as f:
 # -------------------------------
 # Load vectorstore
 # -------------------------------
+# vectorstore = Chroma(
+#     persist_directory="./chroma_db",
+#     collection_name="multi_modal_rag",
+#     embedding_function=GoogleGenerativeAIEmbeddings(model="models/gemini-embedding-001")
+# )
 vectorstore = Chroma(
     persist_directory="./chroma_db",
     collection_name="multi_modal_rag",
-    embedding_function=GoogleGenerativeAIEmbeddings(model="models/gemini-embedding-001")
+    embedding_function=OpenAIEmbeddings(model="text-embedding-3-large")
 )
 
 # -------------------------------

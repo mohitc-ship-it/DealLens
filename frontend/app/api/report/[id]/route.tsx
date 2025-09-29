@@ -243,7 +243,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
 
     try {
       const response = await fetch(`${API_BASE_URL}${reportId}`, {
-        // signal: AbortSignal.timeout(5000),
+        signal: AbortSignal.timeout(100000000),
       })
 
       console.log("got reposne, ", response)
