@@ -79,6 +79,7 @@ export function ChatPanel({ reportId, onClose }: ChatPanelProps) {
     setIsLoading(true)
 
     try {
+      console.log("sending from panel")
       const response = await fetch(`/api/chat/${reportId}`, {
         method: "POST",
         headers: {
@@ -87,13 +88,15 @@ export function ChatPanel({ reportId, onClose }: ChatPanelProps) {
         body: JSON.stringify({ message: inputValue }),
       })
 
+     
+
       if (!response.ok) {
         throw new Error("Failed to send message")
       }
 
       // Handle streaming response
-      const reader = response.body?.getReader()
-      const decoder = new TextDecoder()
+      // const reader = response.body?.getReader()
+      // const decoder = new TextDecoder()
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
         content: "",
@@ -103,49 +106,51 @@ export function ChatPanel({ reportId, onClose }: ChatPanelProps) {
 
       setMessages((prev) => [...prev, assistantMessage])
 
-      if (reader) {
-        while (true) {
-          const { done, value } = await reader.read()
-          if (done) break
+      // if (reader) {
+      //   console.log("i am in reader")
+      //   while (true) {
+      //     const { done, value } = await reader.read()
+      //     if (done) break
 
-          const chunk = decoder.decode(value)
-          const lines = chunk.split("\n")
+      //     const chunk = decoder.decode(value)
+      //     const lines = chunk.split("\n")
 
-          for (const line of lines) {
-            if (line.startsWith("data: ")) {
-              const data = line.slice(6)
-              if (data === "[DONE]") break
+      //     for (const line of lines) {
+      //       if (line.startsWith("data: ")) {
+      //         const data = line.slice(6)
+      //         if (data === "[DONE]") break
 
-              try {
-                const parsed = JSON.parse(data)
-                if (parsed.content) {
-                  assistantMessage.content += parsed.content
-                  setMessages((prev) =>
-                    prev.map((msg) =>
-                      msg.id === assistantMessage.id ? { ...msg, content: assistantMessage.content } : msg,
-                    ),
-                  )
-                }
-              } catch (e) {
-                // Handle non-JSON chunks
-                assistantMessage.content += data
-                setMessages((prev) =>
-                  prev.map((msg) =>
-                    msg.id === assistantMessage.id ? { ...msg, content: assistantMessage.content } : msg,
-                  ),
-                )
-              }
-            }
-          }
-        }
-      } else {
+      //         try {
+      //           const parsed = JSON.parse(data)
+      //           if (parsed.content) {
+      //             assistantMessage.content += parsed.content
+      //             setMessages((prev) =>
+      //               prev.map((msg) =>
+      //                 msg.id === assistantMessage.id ? { ...msg, content: assistantMessage.content } : msg,
+      //               ),
+      //             )
+      //           }
+      //         } catch (e) {
+      //           // Handle non-JSON chunks
+      //           assistantMessage.content += data
+      //           setMessages((prev) =>
+      //             prev.map((msg) =>
+      //               msg.id === assistantMessage.id ? { ...msg, content: assistantMessage.content } : msg,
+      //             ),
+      //           )
+      //         }
+      //       }
+      //     }
+      //   }
+      // } else {
         // Fallback for non-streaming response
+        console.log("got into non streaming")
         const data = await response.json()
         assistantMessage.content = data.reply
         setMessages((prev) =>
           prev.map((msg) => (msg.id === assistantMessage.id ? { ...msg, content: assistantMessage.content } : msg)),
         )
-      }
+      // }
     } catch (error) {
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),

@@ -115,8 +115,9 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
           })
         } else {
           const data = await response.json()
+          console.log("data ", data.answer)
           return NextResponse.json({
-            reply: data.reply || data.message || "No response received",
+            reply: data.answer  || "No response received",
           })
         }
       }

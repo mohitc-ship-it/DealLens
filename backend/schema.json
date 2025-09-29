@@ -1,0 +1,411 @@
+{
+  "property_details": {
+    "title": "PropertyDetails",
+    "description": "Schema for real estate property details",
+    "type": "object",
+    "properties": {
+      "property_name": {
+        "type": "string",
+        "description": "Name of the property"
+      },
+      "address": {
+        "type": "string",
+        "description": "Property address"
+      },
+      "unit_count": {
+        "type": "integer",
+        "description": "Number of units"
+      },
+      "rsf": {
+        "type": "integer",
+        "description": "Rentable square feet"
+      },
+      "lot_size": {
+        "type": ["number", "null"],
+        "description": "Lot size in acres or square feet"
+      },
+      "year_built": {
+        "type": ["integer", "null"],
+        "description": "Year built"
+      },
+      "unit_types": {
+        "type": "array",
+        "description": "List of different unit types",
+        "items": {
+          "type": "object",
+          "properties": {
+            "bedrooms": { "type": "integer" },
+            "number_of_units": { "type": "integer" },
+            "unit_sf": { "type": "number" },
+            "monthly_rent": { "type": "number" },
+            "rent_psf": { "type": "number" }
+          },
+          "required": ["bedrooms", "number_of_units", "unit_sf", "monthly_rent", "rent_psf"]
+        }
+      },
+      "offered_by": {
+        "type": "object",
+        "description": "Information about the offering company",
+        "properties": {
+          "company": { "type": "string" },
+          "address": { "type": "string" },
+          "contact_person": { "type": "string" },
+          "phone": { "type": "string" },
+          "email": { "type": "string" }
+        },
+        "required": ["company", "contact_person"]
+      }
+    },
+    "required": ["property_name", "address", "unit_count", "rsf", "unit_types", "offered_by"]
+  },
+  "broker_info": {
+    "title": "BrokerInfo",
+    "description": "Schema for broker contact and investment strategy",
+    "type": "object",
+    "properties": {
+      "broker_contact_info": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "phone": { "type": "string" },
+          "email": { "type": "string" }
+        },
+        "required": ["name"]
+      },
+      "brokerage": { "type": "string" },
+      "investment_strategy": { "type": "string" }
+    },
+    "required": ["broker_contact_info", "brokerage", "investment_strategy"]
+  },
+  "financial_summary": {
+    "title": "FinancialSummary",
+    "description": "Schema for financial summary details",
+    "type": "object",
+    "properties": {
+      "property_name": { "type": "string" },
+      "address": { "type": "string" },
+      "units": { "type": "integer" },
+      "total_square_feet": { "type": "integer" },
+      "financials_actual": {
+        "type": "object",
+        "properties": {
+          "gross_rental_income": { "type": "number" },
+          "vacancy_allowance": {
+            "type": "object",
+            "properties": {
+              "amount": { "type": "number" },
+              "percentage": { "type": "string" }
+            }
+          },
+          "effective_gross_income": { "type": "number" },
+          "operating_expenses": {
+            "type": "object",
+            "properties": {
+              "total_calculated_opex": { "type": "number" },
+              "individual_expenses": {
+                "type": "object",
+                "properties": {
+                  "property_taxes": { "type": "number" },
+                  "insurance": { "type": "number" },
+                  "maintenance": { "type": "number" }
+                }
+              },
+              "notes_on_other_expenses_in_context": { "type": "array", "items": { "type": "string" } }
+            }
+          },
+          "net_operating_income": { "type": "number" }
+        }
+      },
+      "asking_price": { "type": ["number", "null"] },
+      "cap_rate": { "type": ["number", "null"] },
+      "irr": { "type": ["number", "null"] },
+      "rents": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "unit_type": { "type": "string" },
+            "number_of_units": { "type": "integer" },
+            "square_feet": { "type": "integer" },
+            "monthly_rent": { "type": "number" },
+            "rent_per_sf": { "type": "number" }
+          }
+        }
+      },
+      "property_taxes": { "type": "number" },
+      "assessed_value": { "type": ["number", "null"] }
+    },
+    "required": ["property_name", "address", "units"]
+  },
+  "report_summaries": {
+    "title": "ReportSummaries",
+    "description": "Schema for various report summaries",
+    "type": "object",
+    "properties": {
+      "property_summary": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "address": { "type": "string" },
+          "units": { "type": "integer" },
+          "total_square_feet": { "type": "integer" },
+          "property_type": { "type": "string" }
+        }
+      },
+      "financial_summary": {
+        "type": "object",
+        "properties": {
+          "year": { "type": "integer" },
+          "gross_rental_income": { "type": "number" },
+          "expenses": {
+            "type": "object",
+            "properties": {
+              "total_operating_expenses": { "type": "number" },
+              "property_taxes": { "type": "number" },
+              "insurance": { "type": "number" },
+              "maintenance": { "type": "number" },
+              "water_and_sewer": { "type": "number" },
+              "management_fee_percentage": { "type": "string" },
+              "management_fee_amount": { "type": "number" }
+            }
+          },
+          "vacancy_allowance_percentage": { "type": "string" },
+          "vacancy_allowance_amount": { "type": "number" },
+          "net_operating_income": { "type": "number" },
+          "notes": { "type": "array", "items": { "type": "string" } }
+        }
+      },
+      "rent_roll_overview": {
+        "type": "object",
+        "properties": {
+          "total_units": { "type": "integer" },
+          "total_square_feet": { "type": "integer" },
+          "unit_types": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "bedrooms": { "type": "integer" },
+                "number_of_units": { "type": "integer" },
+                "percentage_of_building": { "type": "string" },
+                "unit_sf": { "type": "integer" },
+                "monthly_rent": { "type": "number" },
+                "rent_per_sf": { "type": "number" }
+              }
+            }
+          },
+          "notes": { "type": "string" }
+        }
+      },
+      "tenant_information": { "type": ["object", "null"] },
+      "market_overview": {
+        "type": "object",
+        "properties": {
+          "radius": { "type": "string" },
+          "population": {
+            "type": "object",
+            "properties": {
+              "projection": { "type": "integer" },
+              "estimate": { "type": "integer" },
+              "census": { "type": "integer" },
+              "growth_recent": { "type": "string" },
+              "growth_past": { "type": "string" }
+            }
+          },
+          "population_by_origin": {
+            "type": "object",
+            "properties": {
+              "hispanic_origin": { "type": "integer" },
+              "white": { "type": "string" },
+              "black": { "type": "string" },
+              "am_indian_alaskan": { "type": "string" },
+              "asian": { "type": "string" },
+              "hawaiian_pacific_island": { "type": "string" },
+              "other": { "type": "string" }
+            }
+          },
+          "us_armed_forces": { "type": "integer" },
+          "households": {
+            "type": "object",
+            "properties": {
+              "projection": { "type": "integer" },
+              "estimate": { "type": "integer" },
+              "census": { "type": "integer" },
+              "growth_recent": { "type": "string" },
+              "growth_past": { "type": "string" },
+              "owner_occupied": { "type": "string" },
+              "renter_occupied": { "type": "string" }
+            }
+          },
+          "households_by_income": {
+            "type": "object",
+            "properties": {
+              "total_households": { "type": "integer" },
+              "less_than_25000": { "type": "string" },
+              "25000_50000": { "type": "string" },
+              "50000_75000": { "type": "string" },
+              "75000_100000": { "type": "string" },
+              "100000_125000": { "type": "string" },
+              "125000_150000": { "type": "string" },
+              "150000_200000": { "type": "string" },
+              "200000_plus": { "type": "string" }
+            }
+          },
+          "average_household_income": { "type": "integer" },
+          "median_household_income": { "type": "integer" }
+        }
+      },
+      "value_add_opportunities": { "type": "object"},
+        "investment_highlights": { "type": "array", "items": { "type": "string" } }
+    }
+  },
+  "comparables": {
+    "title": "ComparablesSummary",
+    "description": "Summary of comparable properties for the investment",
+    "type": "object",
+    "properties": {
+        "comparables": {
+            "type": "array",
+            "description": "List of comparable properties",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "address": {"type": "string"},
+                    "price": {"type": "number"},
+                    "date_sold": {"type": "string", "format": "date"},
+                    "cap_rate": {"type": "number"},
+                    "occupancy": {"type": "number"},
+                    "rsf": {"type": "number"},
+                    "lot_size": {"type": "number"}
+                },
+                "required": ["address", "price"]
+            }
+        }
+    },
+    "required": ["comparables"]
+},
+  "debt_financing":{
+    "title": "DebtFinancing",
+    "description": "Details of debt financing associated with the property",
+    "type": "object",
+    "properties": {
+        "loan_amount": {"type": "number"},
+        "term": {"type": "string"},
+        "loan_type": {"type": "string"},
+        "WALT": {"type": "string"},
+        "lease_type": {"type": "string"}
+    },
+    "required": ["loan_amount", "term"]
+},
+  "modeling_data": {
+    "title": "ModelingData",
+    "description": "Schema for financial modeling and underwriting data",
+    "type": "object",
+    "properties": {
+        "gross_potential_rent": {
+            "type": "object",
+            "properties": {
+                "actual": {"type": "number"}
+            }
+        },
+        "NOI": {
+            "type": "object",
+            "properties": {
+                "actual": {"type": "number"}
+            }
+        },
+        "cap_rate": {"type": "string"},
+        "opex_breakdown": {
+            "type": "object",
+            "properties": {
+                "actual": {
+                    "type": "object",
+                    "properties": {
+                        "total_expenses": {"type": "number"},
+                        "items": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "name": {"type": "string"},
+                                    "amount": {"type": "number"},
+                                    "note": {"type": "string"}
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "price_per_unit": {"type": "string"},
+        "price_per_sf": {"type": "string"},
+        "rent_roll_mix": {
+            "type": "object",
+            "properties": {
+                "total_units": {"type": "integer"},
+                "total_square_feet": {"type": "integer"},
+                "annual_gross_potential_rent": {"type": "number"},
+                "monthly_gross_potential_rent": {"type": "number"},
+                "unit_types": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "bedrooms": {"type": "integer"},
+                            "number_of_units": {"type": "integer"},
+                            "percentage_of_units": {"type": "string"},
+                            "average_unit_square_feet": {"type": "integer"},
+                            "average_monthly_rent": {"type": "number"},
+                            "average_rent_per_sf": {"type": "number"}
+                        }
+                    }
+                },
+                "notes": {"type": "string"}
+            }
+        },
+        "occupancy_history": {
+            "type": "object",
+            "properties": {
+                "vacancy_allowance_percentage": {"type": "string"},
+                "vacancy_allowance_amount": {"type": "number"},
+                "history": {"type": "string"}
+            }
+        },
+        "market_rent_comps": {"type": "string"},
+        "value_add_plan": {"type": "string"},
+        "underwriting_model": {
+            "type": "object",
+            "properties": {
+                "components_provided": {"type": "array", "items": {"type": "string"}},
+                "full_model": {"type": "string"}
+            }
+        }
+    },
+    "required": [
+        "gross_potential_rent",
+        "NOI",
+        "cap_rate",
+        "opex_breakdown",
+        "price_per_unit",
+        "price_per_sf",
+        "rent_roll_mix"
+    ]
+},
+  "proscons": {
+    "title": "ProsCons",
+    "description": "Schema to represent pros and cons of the property investment",
+    "type": "object",
+    "properties": {
+      "pros": {
+        "type": "array",
+        "items": { "type": "string" },
+        "description": "List of advantages or positive factors"
+      },
+      "cons": {
+        "type": "array",
+        "items": { "type": "string" },
+        "description": "List of disadvantages or negative factors"
+      }
+    }
+  }
+}
