@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { X } from "lucide-react"
 
 interface Message {
   id: string
@@ -173,17 +174,16 @@ export function ChatPanel({ reportId, onClose }: ChatPanelProps) {
   }
 
   return (
-    <Card className="h-full flex flex-col border-0 rounded-none">
-      <CardHeader className="flex-row items-center justify-between space-y-0 pb-4 border-b">
+    <Card className="h-full flex flex-col border-0 rounded-none overflow-auto">
+     <div className="flex items-center justify-between px-4 py-3 border-b">
         <div className="flex items-center space-x-2">
           <div className="h-2 w-2 bg-green-500 rounded-full animate-pulse"></div>
-          <CardTitle className="text-lg">Real Estate Assistant</CardTitle>
+          <span className="font-semibold text-lg">Real Estate Assistant</span>
         </div>
-        <Button variant="ghost" size="icon" onClick={onClose} className="lg:hidden">
-          <span className="text-lg">×</span>
+        <Button variant="ghost" size="icon" onClick={onClose} aria-label="Close chat">
+          <X className="h-5 w-5" />
         </Button>
-      </CardHeader>
-
+      </div>
       <CardContent className="flex-1 flex flex-col p-0">
         {/* Messages */}
         <ScrollArea className="flex-1 p-4 chat-scrollbar">
