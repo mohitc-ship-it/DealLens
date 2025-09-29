@@ -4,6 +4,8 @@ import shutil, os, pickle, json
 from langchain.vectorstores import Chroma
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
+from fastapi.responses import Response
+from pyppeteer import launch
 
 # Import your functions
 from vectorStoring import storing
@@ -68,9 +70,59 @@ os.makedirs(UPLOAD_DIR, exist_ok=True)
 os.makedirs(REPORT_DIR, exist_ok=True)
 
 
+FRONTEND_URL = "http://localhost:3000"
+
+
+FRONTEND_URL = "http://localhost:3000"
+REPORT_SELECTOR = "#report-container"  # Change to your main report div id
+
+@app.get("/export-pdf/{report_id}")
+async def export_pdf(report_id: str):
+    try:
+        # Launch headless browser
+        browser = await launch(
+            args=["--no-sandbox", "--disable-setuid-sandbox"],
+            headless=True
+        )
+        page = await browser.newPage()
+
+        # Go to print-friendly frontend route
+        await page.goto(f"{FRONTEND_URL}/report/{report_id}/print", waitUntil="networkidle0")
+
+        # Wait for the report container to appear (adjust selector)
+        try:
+            await page.waitForSelector(REPORT_SELECTOR, timeout=10000)  # 10 seconds
+        except Exception:
+            await browser.close()
+            raise HTTPException(status_code=500, detail="Report content did not load in time")
+
+        # Generate PDF
+        pdf_bytes = await page.pdf({
+            "format": "A4",
+            "printBackground": True,
+            "margin": {"top": "20mm", "bottom": "20mm", "left": "10mm", "right": "10mm"}
+        })
+
+        await browser.close()
+
+        # Ensure PDF is not empty
+        if not pdf_bytes or len(pdf_bytes) < 1000:
+            raise HTTPException(status_code=500, detail="PDF generation failed or is empty")
+
+        # Return PDF as attachment
+        return Response(
+            content=pdf_bytes,
+            media_type="application/pdf",
+            headers={"Content-Disposition": f'attachment; filename="report-{report_id}.pdf"'}
+        )
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"PDF generation failed: {e}")
+
 # ---------------------------
 # 1️⃣ Upload API
 # ---------------------------
+
 @app.post("/upload/")
 async def upload_file(file: UploadFile = File(...)):
     try:

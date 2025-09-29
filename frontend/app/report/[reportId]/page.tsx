@@ -27,14 +27,21 @@ export default function ReportPage() {
     const fetchReport = async () => {
       try {
         const response = await fetch(`/api/report/${reportId}`)
-        console.log("got response in use efdfecct ", response)
+        console.log("got response in useEffect ", response)
         if (!response.ok) throw new Error("Failed to fetch report")
         let data = await response.json()
-        console.log("filrerd ", data)
-        data = data.report
-        setReport(data)
+        console.log("filtered ", data)
+        // Only set report if data is valid (e.g., has an id or required fields)
+        if (data && data.id && data.title) {
+          setReport(data)
+          setError(null)
+        } else {
+          setError("Report is still processing or incomplete. Please wait and try again.")
+          setReport(null)
+        }
       } catch (err) {
         setError(err instanceof Error ? err.message : "Failed to load report")
+        setReport(null)
       } finally {
         setLoading(false)
       }
@@ -79,16 +86,16 @@ export default function ReportPage() {
                 lg:relative lg:max-w-none lg:w-96 lg:z-auto
               "
             >
-              <div className="flex justify-end p-3 border-b border-border">
-                <Button
+              {/* <div className="flex justify-end p-3 border-b border-border"> */}
+                {/* <Button
                   variant="ghost"
                   size="icon"
                   onClick={() => setIsChatOpen(false)}
                   aria-label="Close chat"
                 >
                   <X className="h-5 w-5" />
-                </Button>
-              </div>
+                </Button> */}
+              {/* </div> */}
               <ChatPanel reportId={reportId} onClose={() => setIsChatOpen(false)} />
             </div>
           </>
