@@ -61,6 +61,7 @@ import json
 import re
 from typing import Dict, Any
 from langchain_google_genai import ChatGoogleGenerativeAI
+import os
 
 # ===== Init Gemini =====
 # llm = ChatGoogleGenerativeAI(model="gemini-1.5-flash", temperature=0)
@@ -117,6 +118,7 @@ def build_report(vectorstore, summary_to_chunk) -> Dict[str, Any]:
             else:
                 # If data is other type, store as is or convert accordingly
                 report[section] = data
+        print("section is ", section, " and ", data )
 
     return report
 

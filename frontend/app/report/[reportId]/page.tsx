@@ -23,45 +23,98 @@ export default function ReportPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [isChatOpen, setIsChatOpen] = useState(false)
+//   useEffect(() => {
+//   const controller = new AbortController();
+//   const signal = controller.signal;
+
+//   fetch(`/api/report/${reportId}`, { signal })
+//     .then((res) => res.json())
+//     .then((data) => {
+//       // Handle data
+//     })
+//     .catch((err) => {
+//       if (err.name === 'AbortError') {
+//         // Log or handle the cancellation
+//       } else {
+//         // Handle other errors
+//       }
+//     });
+
+//   // Cleanup function to abort the first request
+//   return () => {
+//     controller.abort();
+//   };
+// }, [reportId]);
+
   useEffect(() => {
-    const fetchReport = async () => {
+    let isMounted = true;
+    let retryCount = 0;
+    const maxRetries = 30; // ~1 minute
+    const retryDelay = 2000; // 2 seconds
+
+    const pollReport = async () => {
       try {
-        const response = await fetch(`/api/report/${reportId}`)
-        console.log("got response in useEffect ", response)
-        if (!response.ok) throw new Error("Failed to fetch report")
-        let data = await response.json()
-        console.log("filtered ", data)
-        // Only set report if data is valid (e.g., has an id or required fields)
-        if (data && data.id && data.title) {
-          setReport(data)
-          setError(null)
-        } else {
-          setError("Report is still processing or incomplete. Please wait and try again.")
-          setReport(null)
+        const response = await fetch(`/api/report/${reportId}`);
+        if (!response.ok) throw new Error("Failed to fetch report");
+        let data = await response.json();
+        data = data.report;
+        if (data && isMounted) {
+          setReport(data);
+          setError(null);
+          setLoading(false);
+        } else if (isMounted) {
+          if (retryCount < maxRetries) {
+            retryCount++;
+            setTimeout(pollReport, retryDelay);
+          } else {
+            setError("Report is still processing. Please refresh or try again later.");
+            setReport(null);
+            setLoading(false);
+          }
         }
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to load report")
-        setReport(null)
-      } finally {
-        setLoading(false)
+        if (isMounted) {
+          if (retryCount < maxRetries) {
+            retryCount++;
+            setTimeout(pollReport, retryDelay);
+          } else {
+            setError("Report is still processing. Please refresh or try again later.");
+            setReport(null);
+            setLoading(false);
+          }
+        }
       }
-    }
-    if (reportId) fetchReport()
-  }, [reportId])
+    };
+    setLoading(true);
+    setError(null);
+    setReport(null);
+    if (reportId) pollReport();
+    return () => {
+      isMounted = false;
+    };
+  }, [reportId]);
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p>Loading report...</p>
+      <div className="min-h-screen flex flex-col items-center justify-center">
+        <svg className="animate-spin h-12 w-12 text-primary mb-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
+        </svg>
+        <h2 className="text-2xl font-bold mb-2">Preparing your report...</h2>
+        <p className="text-muted-foreground text-lg">This may take a moment. Please wait while we generate your report.</p>
       </div>
-    )
+    );
   }
-  if (error || !report) {
+  if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="mb-4 text-destructive">{error || "Report not found"}</p>
+      <div className="min-h-screen flex flex-col items-center justify-center">
+        <p className="mb-4 text-destructive text-lg font-semibold">{error}</p>
         <Button onClick={() => (window.location.href = "/upload")}>Upload New Document</Button>
       </div>
-    )
+    );
+  }
+  if (!report) {
+    return null;
   }
   return (
     <div className="min-h-screen bg-background">
@@ -82,8 +135,8 @@ export default function ReportPage() {
             {/* The Chat Panel itself */}
             <div
               className="
-                fixed top-0 right-0 h-full w-full max-w-sm bg-card border-l border-border z-50
-                lg:relative lg:max-w-none lg:w-96 lg:z-auto
+                fixed top-0 right-0 h-full w-full max-w-lg bg-card border-l border-border z-50
+                lg:relative lg:max-w-none lg:w-[425px] lg:z-auto
               "
             >
               {/* <div className="flex justify-end p-3 border-b border-border"> */}
@@ -96,7 +149,12 @@ export default function ReportPage() {
                   <X className="h-5 w-5" />
                 </Button> */}
               {/* </div> */}
-              <ChatPanel reportId={reportId} onClose={() => setIsChatOpen(false)} />
+              <ChatPanel 
+                reportId={reportId} 
+                report={report} 
+                onClose={() => setIsChatOpen(false)}
+                setReport={setReport}
+              />
             </div>
           </>
         )}

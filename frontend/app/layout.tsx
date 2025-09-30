@@ -5,7 +5,7 @@ import { ErrorBoundary } from "@/components/error-boundary"
 import { Suspense } from "react"
 
 export const metadata: Metadata = {
-  title: "v0 App",
+  title: "DealLens Demo",
   description: "Created with v0",
   generator: "v0.app",
 }

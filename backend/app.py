@@ -50,10 +50,6 @@ REPORT_DIR = "reports"
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 os.makedirs(REPORT_DIR, exist_ok=True)
 
-
-FRONTEND_URL = "http://localhost:3000"
-
-
 FRONTEND_URL = "http://localhost:3000"
 REPORT_SELECTOR = "#report-container"  # Change to your main report div id
 
@@ -142,6 +138,13 @@ async def generate_report(file_key: str):
 
         file_path = os.path.join(UPLOAD_DIR, matching_files[0])
 
+        # Check if report already exists
+        report_path = os.path.join(REPORT_DIR, f"{file_key}_report.json")
+        if os.path.exists(report_path):
+            with open(report_path, "r", encoding="utf-8") as f:
+                report = json.load(f)
+            print("Returning cached report")
+            return JSONResponse(content={"status": "success", "report": report})
         # -------------------------
         # 🔹 Here call your pipeline:
         print("calling build ")
@@ -153,8 +156,8 @@ async def generate_report(file_key: str):
         #     "report": f"Generated report for {matching_files[0]}"
         # }
 
-        # with open("final_report_next.json","r",encoding="utf-8") as f:
-            # report = json.load(f)
+        # with open("exampleReportJson/example.json","r",encoding="utf-8") as f:
+        #     report = json.load(f)
 
         # Save report JSON
         # print('savin report json')

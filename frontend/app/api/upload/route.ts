@@ -45,9 +45,11 @@ export async function POST(request: NextRequest) {
 
       if (response.ok) {
         const backendData = await response.json()
+        console.log("Backend response:", backendData)
 
-        if (backendData.reportId && backendData.reportData) {
-          reportStorage.set(backendData.reportId, backendData.reportData)
+        if (backendData.reportId) {
+          // Don't wait for report data here, it will be fetched later
+          return NextResponse.json({ reportId: backendData.reportId })
 
           return NextResponse.json({
             reportId: backendData.reportId,
