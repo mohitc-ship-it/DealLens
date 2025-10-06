@@ -9,7 +9,9 @@ pdf_path = "ACORD-125-126-140.pdf"
 reader = PdfReader(pdf_path)
 
 # Extract all form fields (name and value)
-fields = reader.get_form_text_fields()  # returns a dictionary
+fields = reader.get_form_text_fields()  # returns a dictionary\
+
+print(fields)
 
 # Save as JSON
 with open("pdf_fields.json", "w") as json_file:
