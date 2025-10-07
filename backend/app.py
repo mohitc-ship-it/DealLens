@@ -285,3 +285,55 @@ async def upload_and_generate_report(file: UploadFile = File(...)):
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+
+# multi-doc uploading with form filler
+import os
+import uuid
+from fastapi import FastAPI, UploadFile, File, HTTPException
+from fastapi.responses import JSONResponse
+from typing import List
+
+UPLOAD_DIR = "temp_uploads"
+os.makedirs(UPLOAD_DIR, exist_ok=True)
+
+app = FastAPI()
+
+# Dummy function for processing files and generating filled PDF
+def process_files_and_generate_pdf(file_paths: List[str]) -> str:
+    """
+    This is where your AI form-filling logic goes.
+    Returns the path to the generated final PDF.
+    """
+    # For demo, just return the first uploaded PDF as "final"
+    # Replace with your actual processing logic
+    return file_paths[0] if file_paths else ""
+
+@app.post("/form-context/")
+async def upload_files(files: List[UploadFile] = File(...)):
+    try:
+        saved_files = []
+
+        # Save each uploaded file with a unique temp name
+        for file in files:
+            file_key = str(uuid.uuid4())
+            temp_file_path = os.path.join(UPLOAD_DIR, f"{file_key}_{file.filename}")
+            with open(temp_file_path, "wb") as f:
+                f.write(await file.read())
+            saved_files.append(temp_file_path)
+
+        # Call your AI / PDF processing function
+        # final_pdf_path = process_files_and_generate_pdf(saved_files)
+        final_pdf_path = "frontend/public/ACORD_filled1.pdf"  # Dummy path for demo
+
+        # Return the local URL or path to the filled PDF
+        return JSONResponse(
+            content={
+                "status": "success",
+                "filledPdfUrl": final_pdf_path  # can be converted to URL if needed
+            }
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Upload failed: {e}")
+

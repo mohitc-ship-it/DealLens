@@ -23,19 +23,18 @@ export default function HomePage() {
             className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-effect mb-6 animate-scale-in"
             style={{ animationDelay: "0.2s" }}
           >
-            <span className="text-sm font-medium text-foreground/80">AI-Powered Document Analysis</span>
+            <span className="text-sm font-medium text-foreground/80">AI-Powered Form Automation</span>
           </div>
 
           <h1 className="text-5xl md:text-7xl font-bold text-foreground mb-6 text-balance leading-tight">
-            PDF Report
+            Smart
             <span className="bg-gradient-to-r from-primary via-blue-500 to-purple-500 bg-clip-text text-transparent">
-              {" "}
-              Analysis
+              {" "}Form Filler
             </span>
           </h1>
 
           <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-3xl mx-auto text-pretty leading-relaxed">
-            Transform your PDF documents into intelligent insights with our cutting-edge AI analysis platform
+            Upload your documents and let our AI automatically detect fields, extract data, and fill your forms with intelligence and accuracy.
           </p>
 
           <div
@@ -47,7 +46,7 @@ export default function HomePage() {
                 size="lg"
                 className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-4 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
               >
-                Get Started
+                Start Upload
               </Button>
             </Link>
             <Button
@@ -66,9 +65,9 @@ export default function HomePage() {
               <div className="mx-auto mb-6 h-16 w-16 rounded-2xl bg-gradient-to-br from-blue-500/20 to-primary/20 flex items-center justify-center backdrop-blur-sm">
                 <div className="w-8 h-8 bg-primary/20 rounded"></div>
               </div>
-              <CardTitle className="text-foreground text-xl font-bold mb-3">Smart Upload</CardTitle>
+              <CardTitle className="text-foreground text-xl font-bold mb-3">Multi-Document Upload</CardTitle>
               <CardDescription className="text-muted-foreground text-base leading-relaxed">
-                Drag and drop your PDF files with intelligent validation and instant processing
+                Upload PDFs, Excel sheets, images, and more — AI will automatically process all your files.
               </CardDescription>
             </CardHeader>
           </Card>
@@ -78,9 +77,9 @@ export default function HomePage() {
               <div className="mx-auto mb-6 h-16 w-16 rounded-2xl bg-gradient-to-br from-green-500/20 to-emerald-500/20 flex items-center justify-center backdrop-blur-sm">
                 <div className="w-8 h-8 bg-green-500/20 rounded"></div>
               </div>
-              <CardTitle className="text-foreground text-xl font-bold mb-3">Deep Analysis</CardTitle>
+              <CardTitle className="text-foreground text-xl font-bold mb-3">AI Form Detection</CardTitle>
               <CardDescription className="text-muted-foreground text-base leading-relaxed">
-                Get comprehensive insights and detailed analysis from your documents using advanced AI
+                Automatically detect fields in your forms and extract context for intelligent AI-based filling.
               </CardDescription>
             </CardHeader>
           </Card>
@@ -90,9 +89,9 @@ export default function HomePage() {
               <div className="mx-auto mb-6 h-16 w-16 rounded-2xl bg-gradient-to-br from-purple-500/20 to-pink-500/20 flex items-center justify-center backdrop-blur-sm">
                 <div className="w-8 h-8 bg-purple-500/20 rounded"></div>
               </div>
-              <CardTitle className="text-foreground text-xl font-bold mb-3">AI Chat</CardTitle>
+              <CardTitle className="text-foreground text-xl font-bold mb-3">Instant Auto-Fill</CardTitle>
               <CardDescription className="text-muted-foreground text-base leading-relaxed">
-                Ask questions and get intelligent responses about your reports in real-time
+                Let AI fill your forms automatically with data extracted from your uploaded documents in real-time.
               </CardDescription>
             </CardHeader>
           </Card>
