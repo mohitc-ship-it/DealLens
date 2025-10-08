@@ -120,9 +120,9 @@ export default function ReportPage() {
     <div className="min-h-screen bg-background">
       <div className="flex h-screen">
         {/* Main content area that resizes */}
-        <div className="flex-1 transition-all duration-300 ease-in-out overflow-y-auto">
+        {/* <div className="flex-1 transition-all duration-300 ease-in-out overflow-y-auto">
           <ReportViewer report={report} />
-        </div>
+        </div> */}
         {/* --- MODIFIED SECTION --- */}
         {/* Conditionally render the entire chat panel and its overlay */}
         {isChatOpen && (

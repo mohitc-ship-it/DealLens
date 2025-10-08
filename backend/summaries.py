@@ -13,16 +13,31 @@ def convert_image(img):
     return base64.b64encode(buffer.getvalue()).decode("utf-8")
 
 def summariesData(texts, tables, provider="openai"):
+    # prompt_text = """
+    # You are an assistant tasked with summarizing tables and text.
+    # Give a concise summary of the table or text.
+
+    # Respond only with the summary, no additional comment.
+    # Do not start your message by saying "Here is a summary" or anything like that.
+    # Just give the summary as it is.
+
+    # Table or text chunk: {element}
+    # """
     prompt_text = """
-    You are an assistant tasked with summarizing tables and text.
-    Give a concise summary of the table or text.
+    You are an assistant summarizing compliance documents (text or tables). 
+    For the given content, extract the following:
 
-    Respond only with the summary, no additional comment.
-    Do not start your message by saying "Here is a summary" or anything like that.
-    Just give the summary as it is.
+    1. Section or ordinance number (if any)
+    2. Topic or subject
+    3. Key definitions, rules, limits, or numeric values
+    4. Purpose or policy rationale (if stated)
+    5. Conditional rules, exceptions, or special notes
 
-    Table or text chunk: {element}
+    Respond only in concise, structured bullet points.
+    Do not add any commentary or preamble.
+    Content: {element}
     """
+
 
     if provider == "gemini":
         from langchain_google_genai import ChatGoogleGenerativeAI
@@ -234,10 +249,22 @@ def summariesImages(images, provider="openai"):
 
     print(f"summaries of images with {provider}")
 
-    prompt_text = (
-        "Describe the image in detail. "
-        "its a part of real estate memorandum"
-    )
+    # prompt_text = (
+    #     "Describe the image in detail. "
+    #     "its a part of compliance documents",
+    # )
+
+    prompt_text = """
+    You are an assistant summarizing images from compliance documents.
+    Describe the image concisely, including:
+    - Type of image (flowchart, diagram, map, chart,...etc)
+    - Sections, rules, or codes depicted
+    - Key relationships, conditional rules, or thresholds
+    - Any numeric values or examples shown
+
+    Respond only in concise bullet points.
+    Image description: {element}
+    """
 
     image_summaries = []
 

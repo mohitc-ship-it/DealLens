@@ -13,16 +13,16 @@ from langchain_openai import OpenAIEmbeddings
 
 #     return retriever
 import pickle
-from langchain.vectorstores import Chroma
+from langchain_chroma import Chroma
 from langchain.storage import InMemoryStore
 from langchain.retrievers.multi_vector import MultiVectorRetriever
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
 import os
 
 
-def create_retriever():
+def create_retriever(db_name,collection_name):
     print("now i am in retriever")
-    persist_dir = "./chroma_db"
+    # persist_dir = "./chroma_db"
 
     # Load persisted vectorstore
     # vectorstore = Chroma(
@@ -31,8 +31,8 @@ def create_retriever():
     #     embedding_function=GoogleGenerativeAIEmbeddings(model="models/gemini-embedding-001")
 
     vectorstore = Chroma(
-        persist_directory="./chroma_db",
-        collection_name="multi_modal_rag",
+        persist_directory=db_name,
+        collection_name=collection_name,
         embedding_function=OpenAIEmbeddings(model="text-embedding-3-large")
     )
 
@@ -413,6 +413,41 @@ def rag(query, vectorstore, summary_to_chunk=None, k=5, min_text_chunks=1, llm_p
     print("sending doe similarity search")
 
     try:
+        # Step 5: Select LLM
+        if llm_provider == "openai":
+            llm = ChatOpenAI(
+                model="gpt-4o-mini",
+                temperature=0,
+                max_retries=2,
+                api_key=os.getenv("OPENAI_API_KEY"),  # safer: load from env
+            )
+        elif llm_provider == "gemini":
+            llm = ChatGoogleGenerativeAI(
+                model="gemini-2.5-flash",
+                temperature=0,
+                max_retries=2,
+            )
+        else:
+            raise ValueError(f"Unsupported LLM provider: {llm_provider}")
+        
+        # QUERY_REWRITE_PROMPT = """
+        # You are an assistant helping retrieve legal and compliance documents.
+
+        # Given a user query, rewrite it into a clear, factual, search-oriented query 
+        # that can best match relevant ordinance or code sections.
+
+        # - Use formal regulatory language (e.g., "according to", "as defined in", "requirements for").
+        # - Expand abbreviations (e.g., "ADU" → "Accessory Dwelling Unit").
+        # - Include key context if implied (e.g., "plaster" → "plaster or similar wall finish materials").
+        # - Output only one rewritten query, no explanations.
+
+        # User query: {query}
+        # Rewritten search query:
+        # """
+
+
+        # query = llm.invoke(QUERY_REWRITE_PROMPT)
+        
         # Step 1: Similarity search
         results = vectorstore.similarity_search(query, k=k)
         # print("result we have ", results)
@@ -423,10 +458,12 @@ def rag(query, vectorstore, summary_to_chunk=None, k=5, min_text_chunks=1, llm_p
 
         for doc in results:
             chunk = doc.metadata.get("original_content")
+           
             if not chunk:
                 continue
             if doc.metadata.get("type") in ["text", "table"]:
                 retrieved_texts.append(chunk)
+                print("chunk is ,",retrieved_texts)
             elif doc.metadata.get("type") == "image":
                 retrieved_images.append(chunk)
 
@@ -454,9 +491,10 @@ def rag(query, vectorstore, summary_to_chunk=None, k=5, min_text_chunks=1, llm_p
         content_list = []
 
         if combined_texts:
-            context_text = "\n".join(map(str, combined_texts[:5]))  # limit to 5 chunks
+            context_text = "\n".join(map(str, combined_texts))  # limit to 5 chunks
             content_list.append({"type": "text", "text": f"Context:\n{context_text}"})
 
+        print("context list text is ", content_list)
         # Format images per provider
         def format_image(img_b64):
             if llm_provider == "gemini":
@@ -479,22 +517,7 @@ def rag(query, vectorstore, summary_to_chunk=None, k=5, min_text_chunks=1, llm_p
         content_list.append({"type": "text", "text": f"Question: {query}"})
         message_local = HumanMessage(content=content_list)
 
-        # Step 5: Select LLM
-        if llm_provider == "openai":
-            llm = ChatOpenAI(
-                model="gpt-4o-mini",
-                temperature=0,
-                max_retries=2,
-                api_key=os.getenv("OPENAI_API_KEY"),  # safer: load from env
-            )
-        elif llm_provider == "gemini":
-            llm = ChatGoogleGenerativeAI(
-                model="gemini-2.5-flash",
-                temperature=0,
-                max_retries=2,
-            )
-        else:
-            raise ValueError(f"Unsupported LLM provider: {llm_provider}")
+
 
         # Step 6: Call LLM with retry
         for attempt in range(2):  # 2 attempts
@@ -503,6 +526,7 @@ def rag(query, vectorstore, summary_to_chunk=None, k=5, min_text_chunks=1, llm_p
                     print("atrructure is ", structure)
                     llm = llm.with_structured_output(structure)
                     response = llm.invoke([message_local])
+                    print("response final is ", response)
                 else:
                     response = llm.invoke([message_local])
                 print("--- RAG PIPELINE END ---\n")

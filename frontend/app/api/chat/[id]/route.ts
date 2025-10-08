@@ -46,7 +46,7 @@ const generateRealEstateResponse = (message: string, reportId: string): string =
   }
 
   // Default response
-  return "I can help you understand various aspects of this real estate analysis including market trends, pricing, investment potential, neighborhood characteristics, and comparable sales. What specific aspect would you like to explore further?"
+  return "I can help you understand various aspects of Kansas City zoning and compliance, including zoning districts, permitted uses, development standards, accessory dwelling units, and review processes. What specific question or topic would you like to explore?"
 }
 
 export async function POST(request: NextRequest, { params }: { params: { id: string } }) {

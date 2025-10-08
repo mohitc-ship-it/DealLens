@@ -12,3 +12,4 @@ python_dotenv
 langchain_chromadb
 fastapi
 langchain-openai
+pillow-avif-plugin

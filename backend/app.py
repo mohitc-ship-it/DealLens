@@ -19,8 +19,8 @@ app = FastAPI(title="Multi-Modal CRE RAG API")
 # -------------------------------
 # Global vectorstore setup
 # -------------------------------
-VECTORSTORE_DIR = "./chroma_db"
-COLLECTION_NAME = "multi_modal_rag"
+VECTORSTORE_DIR = "./chroma_db_compliance"
+COLLECTION_NAME = "compliance_collection"
 
 # vectorstore = Chroma(
 #     persist_directory=VECTORSTORE_DIR,
@@ -130,25 +130,25 @@ async def generate_report(file_key: str):
     try:
         print("got file key ", file_key)
         # Check if uploaded file exists
-        matching_files = [
-            f for f in os.listdir(UPLOAD_DIR) if f.startswith(file_key)
-        ]
-        if not matching_files:
-            raise HTTPException(status_code=404, detail="File not found")
+        # matching_files = [
+        #     f for f in os.listdir(UPLOAD_DIR) if f.startswith(file_key)
+        # ]
+        # if not matching_files:
+        #     raise HTTPException(status_code=404, detail="File not found")
 
-        file_path = os.path.join(UPLOAD_DIR, matching_files[0])
+        # file_path = os.path.join(UPLOAD_DIR, matching_files[0])
 
-        # Check if report already exists
-        report_path = os.path.join(REPORT_DIR, f"{file_key}_report.json")
-        if os.path.exists(report_path):
-            with open(report_path, "r", encoding="utf-8") as f:
-                report = json.load(f)
-            print("Returning cached report")
-            return JSONResponse(content={"status": "success", "report": report})
-        # -------------------------
-        # 🔹 Here call your pipeline:
-        print("calling build ")
-        report = build_report(vectorstore, summary_to_chunk)
+        # # Check if report already exists
+        # report_path = os.path.join(REPORT_DIR, f"{file_key}_report.json")
+        # if os.path.exists(report_path):
+        #     with open(report_path, "r", encoding="utf-8") as f:
+        #         report = json.load(f)
+        #     print("Returning cached report")
+        #     return JSONResponse(content={"status": "success", "report": report})
+        # # -------------------------
+        # # 🔹 Here call your pipeline:
+        # print("calling build ")
+        # report = build_report(vectorstore, summary_to_chunk)
         # -------------------------
         # For demo, we’ll return dummy data
         # report = {
@@ -156,14 +156,14 @@ async def generate_report(file_key: str):
         #     "report": f"Generated report for {matching_files[0]}"
         # }
 
-        # with open("exampleReportJson/example.json","r",encoding="utf-8") as f:
-        #     report = json.load(f)
+        with open("exampleReportJson/final_report.json","r",encoding="utf-8") as f:
+            report = json.load(f)
 
         # Save report JSON
         # print('savin report json')
-        report_path = os.path.join(REPORT_DIR, f"{file_key}_report.json")
-        with open(report_path, "w", encoding="utf-8") as f:
-            json.dump(report, f, indent=2, ensure_ascii=False)
+        # report_path = os.path.join(REPORT_DIR, f"{file_key}_report.json")
+        # with open(report_path, "w", encoding="utf-8") as f:
+        #     json.dump(report, f, indent=2, ensure_ascii=False)
         
         print("sending back")
 
