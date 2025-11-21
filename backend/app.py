@@ -6,6 +6,7 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
 from langchain_openai import OpenAIEmbeddings
 
+from ragAnything import query_rag
 
 # Import your functions
 from vectorStoring import storing
@@ -213,7 +214,8 @@ async def chat(file_id: str,request: Request):
         # Call your RAG function
         # ---------------------------
         print("calling rag")
-        answer = rag(message, vectorstore, summary_to_chunk)
+        # answer = rag(message, vectorstore, summary_to_chunk)
+        answer = query_rag(message)
 
         print("answer ", answer)
 
